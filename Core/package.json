@@ -1,0 +1,11 @@
+{
+  "name": "sw-core",
+  "private" : "true",
+  "dependencies" : {
+	"azure" : "*",
+	"nconf" : "*",
+	"winston" : "*",
+	"async" : "*",
+	"shortid" : "*"
+  }
+}

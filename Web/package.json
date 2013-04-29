@@ -1,0 +1,7 @@
+{
+  "name": "sw-web",
+  "private" : "true",
+  "dependencies" : {
+	"http-server" : "*"
+  }
+}
