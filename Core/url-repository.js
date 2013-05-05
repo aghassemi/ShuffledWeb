@@ -1,5 +1,5 @@
 ﻿var logger = require('winston');
-var conf = require('nconf').file(__dirname + '\\settings.json').env();
+var conf = require('nconf').env().file(__dirname + '\\settings.json').file('test-settings.json');
 var azure = require('azure');
 var async = require('async');
 var shortid = require('shortid').seed(2432);
@@ -17,6 +17,8 @@ tableService.createTableIfNotExists(TABLE, function (error) {
         throw error;
     } 
 });
+
+logger.info('Creating UrlRepository. Table: ' + TABLE  + ' Partition: ' + PARTITION);
 
 var urlRepository = function () { };
 
