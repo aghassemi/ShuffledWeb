@@ -2,8 +2,8 @@
 var conf = require('nconf').env().file(__dirname + '\\settings.json').file('test-settings.json');
 var azure = require('azure');
 var async = require('async');
-var shortid = require('shortid').seed(2432);
 var util = require('util');
+var urlEntity = require('./url-entity');
 
 var TABLE = conf.get('URL_TABLE_NAME');
 var PARTITION = conf.get('URL_PARTITION_KEY');
@@ -22,14 +22,12 @@ logger.info('Creating UrlRepository. Table: ' + TABLE  + ' Partition: ' + PARTIT
 
 var urlRepository = function () { };
 
-urlRepository.prototype.add = function (urls, functionCallback) {
-        
-    urlEntities = mapUrlToEntities(urls);
-    
+urlRepository.prototype.add = function (azureUrlEntities, functionCallback) {
+
     async.each(
-        urlEntities,
+        azureUrlEntities,
         function insertEntities(url, insertCallback) {
-            tableService.insertEntity(TABLE, url, function (error) {
+            tableService.insertEntity(TABLE, url.serializeForAzureTable(PARTITION), function (error) {
                 insertCallback(error);
             });
         },
@@ -52,7 +50,7 @@ urlRepository.prototype.deleteAll = function (functionCallback) {
             async.each(
                 allUrls,
                 function (url, callback) {
-                    tableService.deleteEntity(TABLE, url, function (error) {
+                    tableService.deleteEntity(TABLE, url.serializeForAzureTable( PARTITION ), function (error) {
                         callback(error);
                     });
                 },
@@ -79,38 +77,23 @@ urlRepository.prototype.getAll = function (functionCallback) {
          
     tableService.queryEntities(
       query,
-      function entitiesQueried(error, entities) {
+      function entitiesQueried(error, azureTableEntities) {
           if (error) {
               logger.error('Could not query Azure Table Service');
           }
 
-          if (!entities) { entities = []; }
+          var entities = [];
+
+          if (azureTableEntities) {
+              entities = azureTableEntities.map(function (urlJson) {  return urlEntity.createFromAzureTableJSON(urlJson); });
+          }
+         
           functionCallback(error, entities);
       });
 };
 
 urlRepository.prototype.getRandom = function (count, maxRank) {
     logger.info('Getting random ' + count + ' urls up to rank ' + maxRank);
-};
-
-/*
-* @private
-*/
-function mapUrlToEntities(urls) {
-    if (!Array.isArray(urls)) {
-        urls = [urls];
-    }
-
-    urlEntities = urls.map(function (u) {
-        return {
-            PartitionKey : PARTITION,
-            RowKey : shortid.generate(),
-            Url: u.Url,
-            Rank : u.Rank
-        }
-    });
-
-    return urlEntities;
 };
 
 module.exports = new urlRepository();
