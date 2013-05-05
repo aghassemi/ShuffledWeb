@@ -23,7 +23,7 @@ logger.info('Creating UrlRepository. Table: ' + TABLE  + ' Partition: ' + PARTIT
 var urlRepository = function () { };
 
 urlRepository.prototype.add = function (urls, functionCallback) {
-
+        
     urlEntities = mapUrlToEntities(urls);
     
     async.each(

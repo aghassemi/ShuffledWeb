@@ -6,6 +6,9 @@
 	"nconf" : "*",
 	"winston" : "*",
 	"async" : "*",
-	"shortid" : "*"
+	"shortid" : "*",
+	"date-utils" : "*",
+	"adm-zip" : "*",
+	"request" : "*"
   }
 }

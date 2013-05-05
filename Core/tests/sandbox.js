@@ -2,27 +2,31 @@
 
 var repo = require('../url-repository');
 var async = require('async');
+var importer = require('../alexa-importer');
 
-var urls = [{ Url: 'http://google.com', Rank: 1 }, { Url: 'http://yahoo.com', Rank: 2 }];
+//var urls = [{ Url: 'http://google.com', Rank: 1 }, { Url: 'http://yahoo.com', Rank: 2 }];
 
-async.series([
-    function (callback) {
-        console.log('deleting');
-        repo.deleteAll( function( err ) { callback( err ); } );
-    },
-    function (callback) {
-        console.log('adding');
-        repo.add( urls, function( err ) { callback( err ); } );
-    },
-    function (callback) {
-        console.log('getting all');
-        repo.getAll( function( err, urlEntities ) {
-            console.log(urlEntities);
-            callback(err);
-        });
-    }
-], function (err) {
-    if (err) {
-        console.log("Error " + err);
-    }
-});
+//async.series([
+//    function (callback) {
+//        console.log('deleting');
+//        repo.deleteAll( function( err ) { callback( err ); } );
+//    },
+//    function (callback) {
+//        console.log('adding');
+//        repo.add( urls, function( err ) { callback( err ); } );
+//    },
+//    function (callback) {
+//        console.log('getting all');
+//        repo.getAll( function( err, urlEntities ) {
+//            console.log(urlEntities);
+//            callback(err);
+//        });
+//    }
+//], function (err) {
+//    if (err) {
+//        console.log("Error " + err);
+//    }
+//});
+
+
+importer.import();
