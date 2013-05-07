@@ -6,12 +6,22 @@ var async = require('async');
 var http = require('http');
 var request = require('request');
 var admZip = require('adm-zip');
+var csv = require('csv');
+var events = require('events');
+var sys = require('sys');
+var repo = require('./url-repository');
+var urlEntity = require('./url-entity');
 
 var ALEXA_BASE_FOLDER_PATH = __dirname + "/_alexaFiles/";
 
-var alexaImporter = {};
+var alexaImporter = function() {
+    events.EventEmitter.call(this);
+    return (this);
+};
 
-alexaImporter.NumberOfSites = {
+sys.inherits(alexaImporter, events.EventEmitter);
+
+alexaImporter.prototype.NumberOfSites = {
     N10: 10,
     N100: 100,
     N1K: 1000,
@@ -24,11 +34,36 @@ alexaImporter.NumberOfSites = {
     MAX: 1000000
 };
 
-alexaImporter.import = function( numSites, functionCallback ) {
+alexaImporter.prototype.import = function( numSites, functionCallback ) {
+    
+    var me = this;
 
-    getTopSitesCSV(function (error, csv) {
-        var x = csv.substring(1, 50);
-        console.log(x);
+    getTopSitesCSV(function (error, csvContent) {
+
+        var numImported = 0;
+        if (!error) {
+            csv()
+            .from(csvContent)
+            .transform(function (row, index) {
+                if (index <= numSites) {
+                    var record = urlEntity.createNew(row[1], row[0]);
+                    repo.add(record, function (addError) {
+                        if (!addError) {
+                            me.emit('record', ++numImported);
+                        } else {
+                            functionCallback(addError);
+                        }
+
+                        if (numImported == numSites) {
+                            me.emit('end', numImported);
+                        }
+                    });  
+                }
+            })
+        } else {
+            functionCallback(error);
+        }
+
     });
 };
 
@@ -98,4 +133,4 @@ function getCurrentTopSitesZipFilePathSync() {
     return ALEXA_BASE_FOLDER_PATH + 'alexa-' + Date.today().toYMD() + '.zip';
 };
 
-module.exports = alexaImporter;
+module.exports = new alexaImporter();

@@ -9,6 +9,7 @@
 	"shortid" : "*",
 	"date-utils" : "*",
 	"adm-zip" : "*",
-	"request" : "*"
+	"request" : "*",
+	"csv" : "*"
   }
 }

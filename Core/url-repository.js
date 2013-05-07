@@ -23,6 +23,9 @@ logger.info('Creating UrlRepository. Table: ' + TABLE  + ' Partition: ' + PARTIT
 var urlRepository = function () { };
 
 urlRepository.prototype.add = function (azureUrlEntities, functionCallback) {
+    if (!util.isArray(azureUrlEntities)) {
+        azureUrlEntities = [azureUrlEntities];
+    }
 
     async.each(
         azureUrlEntities,
