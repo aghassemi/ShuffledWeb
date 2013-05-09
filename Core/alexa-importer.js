@@ -22,6 +22,7 @@ var alexaImporter = function() {
 sys.inherits(alexaImporter, events.EventEmitter);
 
 alexaImporter.prototype.NumberOfSites = {
+    N1: 1,
     N10: 10,
     N100: 100,
     N1K: 1000,
@@ -44,21 +45,33 @@ alexaImporter.prototype.import = function( numSites, functionCallback ) {
         if (!error) {
             csv()
             .from(csvContent)
-            .transform(function (row, index) {
-                if (index <= numSites) {
-                    var record = urlEntity.createNew(row[1], row[0]);
-                    repo.add(record, function (addError) {
+            .to.array(function (csvArray, count) {
+  
+                csvArray = csvArray.splice(0, Math.min(count, numSites));
+
+                var batchSize = 100;
+                urlEntityBatches = chunkAndTransform(csvArray, batchSize, function(row) {
+                    return urlEntity.createNew(row[1], row[0]);
+                });
+                console.log(urlEntityBatches);
+                for (var i = 0; i < urlEntityBatches.length; i++) {
+                    var batchItems = urlEntityBatches[i];
+                    var batchLength = batchItems.length;
+
+                    repo.add(batchItems, function (addError) {
                         if (!addError) {
-                            me.emit('record', ++numImported);
+                            numImported = numImported + batchLength;
+                            me.emit('record', numImported);
                         } else {
                             functionCallback(addError);
                         }
 
-                        if (numImported == numSites) {
+                        if (numImported >= numSites) {
                             me.emit('end', numImported);
                         }
-                    });  
+                    });
                 }
+
             })
         } else {
             functionCallback(error);
@@ -132,5 +145,25 @@ function getCurrentTopSitesCSVFilePathSync() {
 function getCurrentTopSitesZipFilePathSync() {
     return ALEXA_BASE_FOLDER_PATH + 'alexa-' + Date.today().toYMD() + '.zip';
 };
+
+function chunkAndTransform(arr, chunkSize, transformer) {
+
+    var transformedArray = arr.filter(function (item) {
+        return transformer(item);
+    });
+
+    var index = 0;
+    var indexEnd = 0;
+    var length = transformedArray.length;
+    var out = [];
+
+    while (index < length) {
+        indexEnd = Math.min( length, index + chunkSize );
+        var chunk = transformedArray.slice(index, indexEnd);
+        out.push(chunk);
+        index = indexEnd;
+    }
+    return out;
+}
 
 module.exports = new alexaImporter();

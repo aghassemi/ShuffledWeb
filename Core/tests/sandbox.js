@@ -32,14 +32,14 @@ var urls = [
 //    }
 //});
 
-var numToImport = importer.NumberOfSites.N10;
+var numToImport = importer.NumberOfSites.N100;
 var prevPercentageComplete = 0;
 var prevPercentageComplete = 0;
 
 importer.on('record', function (numImported) {
-    percentageComplete = Math.floor((numImported * 100) / numToImport);
+    percentageComplete = Math.ceil((numImported * 100) / numToImport);
     if (prevPercentageComplete != percentageComplete) {
-        console.log(prevPercentageComplete + '%');
+        console.log( percentageComplete + '% done');
     }
     prevPercentageComplete = percentageComplete;
 });
@@ -47,7 +47,7 @@ importer.on('record', function (numImported) {
 importer.on('end', function (numImported) {
     console.log('IMPORT COMPLETED ' + numImported);
     repo.getAll(function (err, urlEntities) {
-        console.log(urlEntities);
+        //console.log(urlEntities);
     });
 });
 
