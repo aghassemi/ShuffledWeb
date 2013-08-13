@@ -53,7 +53,7 @@ alexaImporter.prototype.import = function( numSites, functionCallback ) {
                 urlEntityBatches = chunkAndTransform(csvArray, batchSize, function(row) {
                     return urlEntity.createNew(row[1], row[0]);
                 });
-                console.log(urlEntityBatches);
+
                 for (var i = 0; i < urlEntityBatches.length; i++) {
                     var batchItems = urlEntityBatches[i];
                     var batchLength = batchItems.length;
