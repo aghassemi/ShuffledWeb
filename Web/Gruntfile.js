@@ -1,5 +1,8 @@
 module.exports = function(grunt) {
 
+  var csv = require('csv')
+  var fs = require('fs');
+
   grunt.initConfig({
 
     pkg: grunt.file.readJSON('package.json'),
@@ -48,10 +51,6 @@ module.exports = function(grunt) {
       css: {   
         src: ['src/static/css/*.css'],
         dest: '<%= dirs.build %>/<%= pkg.name %>.css'
-      },
-      filters: {
-        src: ['<%= dirs.filters %>/*'],
-        dest: '<%= dirs.filters %>/filters-all.csv'
       }
     },
     cssmin: {
@@ -84,57 +83,95 @@ module.exports = function(grunt) {
   grunt.registerTask('deploy', ['copy:deploy'] );
   grunt.registerTask('build', ['copy:assets', 'copy:libs','copy:app', 'concat:js', 'concat:css', 'uglify', 'cssmin:css', 'clean:build']);
   grunt.registerTask('default', ['build','deploy'] );
-  grunt.registerTask('filter', ['concat:filters','filter-urls'] );
 
-  grunt.registerTask('filter-urls', function() {
+  grunt.registerTask('filter', function() {
   
     var done = this.async();
 
-    var csv = require('csv')
-    var fs = require('fs');
-    var filters = [];
+    var phrases = [];
+    var domains = {};
+
     csv()
-    .from.stream(fs.createReadStream( grunt.config.get('dirs.filters') + '/filters-all.csv'))
+    .from.stream(fs.createReadStream( grunt.config.get('dirs.filters') + '/phrases'))
     .on('record', function(row,index){
-        filters.push( row[0].toLowerCase() );
+        phrases.push( row[0].toLowerCase() );
     })
     .on('end', function(count) {
-        LoadAndWriteTopSites();
+        grunt.log.writeln( count + ' bad phrases loaded.');
+        LoadDomains();
     });
 
-    function LoadAndWriteTopSites() {
-        csv()
-        .from.stream(fs.createReadStream('top-1m.csv'))
-        .to.stream(fs.createWriteStream( grunt.config.get('dirs.dist') + '/top-1m.csv'))
-        .transform( function(row){
-            var site = row[1];
-
-            if( IsSafe( site ) ) {
-               return row;
-            } else {
-              return;
-            }
-            
-        }).on('end', function( count ) {
-            grunt.log.writeln(count + ' Urls written');
-            done();
-        });
+    function LoadDomains() {
+      csv()
+      .from.stream(fs.createReadStream( grunt.config.get('dirs.filters') + '/domains'))
+      .on('record', function(row,index){
+          domains[ row[0].toLowerCase() ] = true;
+      })
+      .on('end', function(count) {
+          grunt.log.writeln( count + ' blacklisted domains loaded.');
+          LoadAndWriteTopSites( Filter, done );
+      });
     };
 
-    function IsSafe( url ) {
+    function Filter( url ) {
 
       url = url.toLowerCase();
       
-      for( var i =0; i < filters.length; i++ ) {
-          if( url.indexOf( filters[i] ) >= 0 ){
-
-              return false;
-          }
+      if( domains[ url ] === true ) {
+        return 'bad_domain';
       }
 
-      return true;
+      for( var i =0; i < phrases.length; i++ ) {
+          if( url.indexOf( phrases[i] ) >= 0 ){
+              return 'bad_phrase';
+          }
+      }
+      return 'safe';
+
     };
 
   });
+
+  function LoadAndWriteTopSites( filterFunc, doneCallback ) {
+
+      grunt.log.writeln( 'Filtering started.' );
+
+      var numSites = 0;
+      var numSafeSites = 0;
+      var numUnsafeByDomain = 0;
+      var numUnsafeByPhrase = 0;
+
+      csv()
+      .from.stream(fs.createReadStream('top-1m.csv'))
+      .to.stream(fs.createWriteStream( grunt.config.get('dirs.dist') + '/top-1m.csv'))
+      .transform( function(row){
+          var site = row[1];
+          numSites++;
+
+          if( (numSites % 10000) == 0 ) {
+            grunt.log.write('.');
+          }
+
+          var filterResult = filterFunc.call( filterFunc, site );
+
+          if( filterResult == 'safe' ) {
+            numSafeSites++;
+            return row;
+          } else if( filterResult == 'bad_domain' ) {
+            numUnsafeByDomain++;
+          } else if( filterResult == 'bad_phrase' ) {
+            numUnsafeByPhrase++;
+          } 
+
+          return;
+          
+      }).on('end', function( count ) {
+          grunt.log.writeln( '\nFiltering done, out of ' + numSites + ' sites:' );
+          grunt.log.writeln(  numSafeSites + ' safe' );
+          grunt.log.writeln(  numUnsafeByDomain + ' matched domain blacklist');
+          grunt.log.writeln(  numUnsafeByPhrase + ' matched phrase blacklist');
+          doneCallback.call( doneCallback );
+      });
+  };
 
 };
