@@ -1,0 +1,75 @@
+html {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+iframe {
+    height: 100%;
+    width: 100%;
+    border: none;
+}
+
+.toolbar {
+    position: absolute;
+    top: 0;
+    box-shadow: 0px 1px 3px #333;
+    width: 100%;
+    height: 40px;
+    background-color: #222;
+    position: fixed;
+    z-index: 100;
+}
+
+.hidden {
+    position: absolute;
+    left: -10000px !important;
+    top: -10000px !important;
+}
+
+.frameWrapper {
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-top: 40px;
+    position: absolute;
+    z-index:50;
+}
+
+.urliframes {
+    width: 100%;
+    height: 100%;
+}
+
+a {
+    color: white;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.toolbar .next {
+    padding: 10px;
+    display:inline-block;
+    width: 900px;
+}
+
+.loading {
+    background-image: url("loading.gif");
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+#urlSpan {
+    color: #fafafa;
+}

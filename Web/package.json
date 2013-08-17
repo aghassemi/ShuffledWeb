@@ -1,7 +1,16 @@
 {
-  "name": "sw-web",
+  "name": "shuffledweb",
+  "version": "0.0.1",
   "private" : "true",
   "dependencies" : {
-	"http-server" : "*"
-  }
+  	"node-csv" : "*",
+	"grunt-contrib-uglify" : "*",
+	"grunt-contrib-concat" : "*",
+	"grunt-contrib-cssmin" : "*",
+	"grunt-contrib-clean" : "*",
+	"grunt-contrib-copy" : "*"
+  },
+  "scripts": {
+	  "preinstall": "npm install -g grunt-cli"
+	}
 }

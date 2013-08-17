@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="google" value="notranslate">
+    <title>Random</title>
+</head>
+<body>
+    <link rel="stylesheet" type="text/css" href="shuffledweb.css" >
+    <div class="toolbar">
+        <a class="next" href="javascript://" onclick="next();return false;">
+            Next
+        </a>
+        <span id="urlSpan"></span><a href="javascript:window.open(iframeQueue[0].attr('src'))">N</a>
+    </div>
+    <div class="frameWrapper">
+         <iframe class="urliframes" src="http://www.example.com" ALLOWTRANSPARENCY="false"></iframe>
+    </div>
+   
+     <div class="frameWrapper hidden">
+        <iframe class="urliframes" src="about:blank" ALLOWTRANSPARENCY="false"></iframe>
+     </div>
+     <div class="frameWrapper hidden">
+        <iframe class="urliframes" src="about:blank" ALLOWTRANSPARENCY="false"></iframe>
+     </div>
+     <div class="frameWrapper hidden">
+        <iframe class="urliframes" src="about:blank" ALLOWTRANSPARENCY="false"></iframe>
+     </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <script src="shuffledweb.js"></script>
+</body>
+</html>
