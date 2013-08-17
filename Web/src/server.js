@@ -1,5 +1,6 @@
 var csv = require('csv')
 var http = require('http');
+var fs = require('fs');
 
 var urls = [];
 
@@ -12,20 +13,15 @@ csv()
 var port = process.env.PORT || 8080; 
 
 http.createServer(function (req, res) {
-    try {
-        handleRequest(req, res);
-    } catch (e) {
-        serverError(req, res);
-        console.log(e);
-    }
+    handleRequest(req, res);
 }).listen(port);
 
 
 var handleRequest = function( req, res ) {
     var urlParts = require('url').parse(req.url);
-    if (urlParts.pathname == '/rpc/next') {
+    if (urlParts.pathname.indexOf('/rpc/next') >= 0 ) {
         serveRPC('next', req, res);
-    } else if (urlParts.pathname == '/b') {
+    } else if (urlParts.pathname.indexOf('/b')  >= 0 ) {
         serve204( req, res );
     } else {
         notFound(req, res);

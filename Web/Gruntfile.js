@@ -24,7 +24,13 @@ module.exports = function(grunt) {
         cwd: 'src/static/',
         expand: true,
         src: '*',
-        dest: '<%= dirs.dist %>/static/',
+        dest: '<%= dirs.dist %>/',
+      },
+      libs: {
+        cwd: 'src/node_modules/',
+        expand: true,
+        src: '**',
+        dest: '<%= dirs.dist %>/node_modules/',
       },
     },
     concat: {
@@ -40,7 +46,7 @@ module.exports = function(grunt) {
     cssmin: {
       css:{
         src: '<%= dirs.build %>/<%= pkg.name %>.css',
-        dest: '<%= dirs.dist %>/static/<%= pkg.name %>.min.css'
+        dest: '<%= dirs.dist %>/<%= pkg.name %>.min.css'
       }
     },
     uglify: { 
@@ -50,7 +56,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          '<%= dirs.dist %>/static/<%= pkg.name %>.min.js': ['<%= dirs.build %>/<%= pkg.name %>.js']
+          '<%= dirs.dist %>/<%= pkg.name %>.min.js': ['<%= dirs.build %>/<%= pkg.name %>.js']
         }
       }
     }
@@ -64,6 +70,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   
 
-  grunt.registerTask('default', [ 'clean:dist', 'copy:assets', 'copy:app', 'concat:js', 'concat:css', 'uglify', 'cssmin:css', 'clean:build']);
+  grunt.registerTask('default', [ 'clean:dist', 'copy:assets', 'copy:libs','copy:app', 'concat:js', 'concat:css', 'uglify', 'cssmin:css', 'clean:build']);
 
 };

@@ -60,7 +60,7 @@ function loadMoreUrls() {
     };
 
     var ajax = $.ajax({
-        url: "/rpc/next",
+        url: "/n/rpc/next",
         dataType: 'json',
         success: success
     });

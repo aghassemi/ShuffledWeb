@@ -9,6 +9,6 @@ window.top.onbeforeunload = function () {
 setInterval(function () {
     if (prevent_bust > 0) {
         prevent_bust -= 2
-        window.top.location = location.protocol+'//'+location.hostname + (location.port ? ':'+location.port: ''); '/b';
+        window.top.location = location.protocol+'//'+location.hostname + (location.port ? ':'+location.port: ''); '/n/b';
     }
 }, 1);
