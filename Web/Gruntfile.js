@@ -32,6 +32,12 @@ module.exports = function(grunt) {
         src: '**',
         dest: '<%= dirs.dist %>/node_modules/',
       },
+      deploy: {
+        cwd: '<%= dirs.dist %>',
+        expand: true,
+        src: '**',
+        dest: 'C:\\Users\\Ali\\Documents\\My Web Sites\\ShuffledWeb',
+      }
     },
     concat: {
       js: {
@@ -70,6 +76,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   
 
-  grunt.registerTask('default', [ 'clean:dist', 'copy:assets', 'copy:libs','copy:app', 'concat:js', 'concat:css', 'uglify', 'cssmin:css', 'clean:build']);
-
+  grunt.registerTask('deploy', ['copy:deploy'] );
+  grunt.registerTask('build', ['copy:assets', 'copy:libs','copy:app', 'concat:js', 'concat:css', 'uglify', 'cssmin:css', 'clean:build']);
+  grunt.registerTask('default', ['build','deploy'] );
 };

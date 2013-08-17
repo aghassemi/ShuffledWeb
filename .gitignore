@@ -18,3 +18,7 @@ web/dist
 _alexaFiles
 
 npm-debug.log
+
+/Web/sw.web.sublime-project
+
+/Web/sw.web.sublime-workspace
