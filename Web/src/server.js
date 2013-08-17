@@ -3,12 +3,19 @@ var http = require('http');
 var fs = require('fs');
 
 var urls = [];
+var filters = [];
 
 csv()
 .from.stream(fs.createReadStream('top-1m.csv'))
 .on('record', function(row,index){
-    urls.push(row[1]);
+
+    var site = row[1];
+    urls.push(site);
+
 })
+.on('end', function(count) {
+    console.log( urls.length + ' urls loaded' );
+});
 
 var port = process.env.PORT || 8080; 
 
