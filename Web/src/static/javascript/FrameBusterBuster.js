@@ -1,4 +1,9 @@
+(function(){
+
+'use strict';
+
 var prevent_bust = 0
+var ignoreBust = false;
 window.top.onbeforeunload = function () {
     for( var i = 0; i < 10000; i++ ){
         document.createElement('div');
@@ -9,6 +14,12 @@ window.top.onbeforeunload = function () {
 setInterval(function () {
     if (prevent_bust > 0) {
         prevent_bust -= 2
-        window.top.location = location.protocol+'//'+location.hostname + (location.port ? ':'+location.port: '') + '/n/b';
+
+        if( !ignoreBust ) { 
+        	var currentHost = location.protocol+'//'+location.hostname + (location.port ? ':'+location.port: '');
+        	window.top.location = currentHost + '/n/b';
+        }
     }
 }, 1);
+
+})();

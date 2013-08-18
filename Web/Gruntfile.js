@@ -48,6 +48,10 @@ module.exports = function(grunt) {
         src: ['src/static/javascript/*.js'],
         dest: '<%= dirs.build %>/<%= pkg.name %>.js'
       },
+      jsDev: {
+        src: ['src/static/javascript/*.js'],
+        dest: '<%= dirs.dist %>/<%= pkg.name %>.min.js'
+      },
       css: {   
         src: ['src/static/css/*.css'],
         dest: '<%= dirs.build %>/<%= pkg.name %>.css'
@@ -81,8 +85,13 @@ module.exports = function(grunt) {
   
 
   grunt.registerTask('deploy', ['copy:deploy'] );
-  grunt.registerTask('build', ['copy:assets', 'copy:libs','copy:app', 'concat:js', 'concat:css', 'uglify', 'cssmin:css', 'clean:build']);
-  grunt.registerTask('default', ['build','deploy'] );
+  grunt.registerTask('buildAssets', ['copy:assets', 'copy:libs','copy:app', 'concat:js', 'concat:css', 'cssmin:css']);
+  grunt.registerTask('buildProd', ['buildAssets', 'uglify', 'clean:build']);
+  grunt.registerTask('buildDev', ['buildAssets', 'concat:jsDev', 'clean:build']);
+
+
+  grunt.registerTask('default', ['buildProd','deploy'] );
+  grunt.registerTask('dev', ['buildDev','deploy'] );
 
   grunt.registerTask('filter', function() {
   

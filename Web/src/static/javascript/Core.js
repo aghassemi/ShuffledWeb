@@ -1,3 +1,7 @@
+(function(){
+
+'use strict';
+
 var curUrls = [];
 var curIndex = 0;
 var wait = false;
@@ -5,6 +9,8 @@ var iframeQueue = [];
 
 var waitQueue = [];
 var urlSpan;
+
+var numCacheIFrames = 4;
 
 function loadiframe(iframe) {
 
@@ -43,11 +49,12 @@ function loadiframe(iframe) {
 };
 
 function next() {
-    $(document.body).addClass('loading');
+
+    $(document.body).addClass('sw-loading');
     var iframe = iframeQueue.shift();
-    iframe.parent().addClass('hidden');
-    iframeQueue[0].parent().removeClass('hidden');
-    urlSpan.text( iframeQueue[0].attr('src') );
+    iframe.parent().addClass('sw-hidden');
+    iframeQueue[0].parent().removeClass('sw-hidden');
+    $('.sw-url').val( iframeQueue[0].attr('src') );
     loadiframe(iframe);
     iframeQueue.push(iframe);
 
@@ -68,19 +75,56 @@ function loadMoreUrls() {
     return ajax;
 };
 
-$(document).ready(function () {
-    var urlIframes = $(".urliframes");
-    urlSpan = $('#urlSpan');
-    for (var i = 0; i < urlIframes.length; i++) {
-        var iframeObj = $(urlIframes[i]);
+function startEngine() {
+
+    $('.sw-url').val( location.href );
+    $('.sw-navbar-items').show();
+
+    for( var i = 0; i < numCacheIFrames; i++ ) {
+        var iframeWrapper = document.createElement('div');
+        iframeWrapper.className = 'sw-iframe-wrapper sw-hidden';
+
+        var iframeObj = $('<iframe class="sw-iframe" src="about:blank" allowTransparency="false"></iframe>');
+        iframeObj.appendTo( iframeWrapper );
+
         iframeQueue.push(iframeObj);
         if (i > 0) {
             loadiframe(iframeObj);
         }
         iframeObj.load(function () {
             if (iframeObj[0].src != 'about:blank') {
-                $(document.body).removeClass('loading');
+                $(document.body).removeClass('sw-loading');
             }
         });
+
+        document.body.appendChild( iframeWrapper );
     }
+
+};
+
+function installEvents() {
+
+    $('.sw-url-new-window').click( function() {
+        window.open(iframeQueue[0].attr('src'));
+        return false;
+    });
+
+    $('.sw-shuffle-action').click( function() {
+        next();
+        return false;
+    });
+
+    $('.sw-accept').click( function() {
+        startEngine();
+        $('.sw-main').hide();
+        next();
+        return false;
+    });
+
+};
+
+$(document).ready(function () {
+    installEvents();
 });
+
+})();
