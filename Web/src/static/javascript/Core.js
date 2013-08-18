@@ -8,9 +8,8 @@ var wait = false;
 var iframeQueue = [];
 
 var waitQueue = [];
-var urlSpan;
 
-var numCacheIFrames = 4;
+var numCacheIFrames = 5;
 
 function loadiframe(iframe) {
 
@@ -24,8 +23,9 @@ function loadiframe(iframe) {
         curriframe.allowTransparency = false;
         setTimeout(function () {
             curriframe.src = 'http://www.' + curUrls[curIndex];
-            curIndex++;
-        }, 10);
+            curIndex++;$('.sw-url').val( iframeQueue[0].attr('src') );
+            $('.sw-url').val( iframeQueue[0].attr('src') );
+        }, 0);
 
     };
 
@@ -54,7 +54,7 @@ function next() {
     var iframe = iframeQueue.shift();
     iframe.parent().addClass('sw-hidden');
     iframeQueue[0].parent().removeClass('sw-hidden');
-    $('.sw-url').val( iframeQueue[0].attr('src') );
+    
     loadiframe(iframe);
     iframeQueue.push(iframe);
 
@@ -75,10 +75,7 @@ function loadMoreUrls() {
     return ajax;
 };
 
-function startEngine() {
-
-    $('.sw-url').val( location.href );
-    $('.sw-navbar-items').show();
+function initIFrames() {
 
     for( var i = 0; i < numCacheIFrames; i++ ) {
         var iframeWrapper = document.createElement('div');
@@ -114,10 +111,36 @@ function installEvents() {
         return false;
     });
 
+     $('.sw-brand').click( function() {
+        ignoreBust = true;
+        location.reload();
+        return false;
+    });
+
     $('.sw-accept').click( function() {
-        startEngine();
-        $('.sw-main').hide();
+        initIFrames();
+        $('.sw-main').hide();http://localhost:62543/
+        $('.sw-slogan').hide();
+        $("html").css({"height":"100%"});
+        $("html").css({"overflow":"hidden"});
+
         next();
+        
+        $('.sw-navbar-items').show();      
+        $('.sw-navbar-wrapper').click( function( e ) {
+            if( $(e.target).hasClass('sw-navbar') || $(e.target).hasClass('sw-navbar-wrapper') ) {
+                next();
+                return false;
+            }
+        });
+
+        $(document).keydown(function(e){
+            if (e.keyCode == 39) { 
+                next();
+                return false;
+            }
+        });
+
         return false;
     });
 

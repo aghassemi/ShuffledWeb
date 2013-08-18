@@ -1,9 +1,9 @@
+var ignoreBust = false;
 (function(){
 
 'use strict';
 
 var prevent_bust = 0
-var ignoreBust = false;
 window.top.onbeforeunload = function () {
     for( var i = 0; i < 10000; i++ ){
         document.createElement('div');

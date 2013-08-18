@@ -56,7 +56,7 @@ var serve204 = function (req, res) {
 
 var getNextUrls = function() {
     var result = [];
-    for( var i = 0; i < 70; i++ ) {
+    for( var i = 0; i < 100; i++ ) {
         var index = Math.floor(Math.random() * 0.5 * urls.length);
         result.push( urls[index] );
     }
