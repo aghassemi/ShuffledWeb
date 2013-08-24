@@ -85,9 +85,7 @@ function initIFrames() {
         iframeObj.appendTo( iframeWrapper );
 
         iframeQueue.push(iframeObj);
-        if (i > 0) {
-            loadiframe(iframeObj);
-        }
+
         iframeObj.load(function () {
             if (iframeObj[0].src != 'about:blank') {
                 $(document.body).removeClass('sw-loading');
@@ -98,6 +96,17 @@ function initIFrames() {
     }
 
 };
+
+function loadFirstIFrame() {
+    loadiframe(iframeQueue[1]);
+};
+
+function loadTheRestOfIFrames() {
+    loadiframe(iframeQueue[0]);
+    for (var i = 2; i < numCacheIFrames; i++) {
+        loadiframe(iframeQueue[i]);
+    };
+}
 
 function installEvents() {
 
@@ -118,7 +127,8 @@ function installEvents() {
     });
 
     $('.sw-accept').click( function() {
-        initIFrames();
+
+        loadTheRestOfIFrames();
         $('.sw-main').hide();http://localhost:62543/
         $('.sw-slogan').hide();
         $("html").css({"height":"100%"});
@@ -148,6 +158,10 @@ function installEvents() {
 
 $(document).ready(function () {
     installEvents();
+    setTimeout( function(){
+        initIFrames();
+        loadFirstIFrame();
+    }, 0);
 });
 
 })();

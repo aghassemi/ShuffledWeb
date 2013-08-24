@@ -117,7 +117,6 @@ a.sw-navbar-item:hover, a.sw-navbar-item:focus {
 .sw-url {
     font-family: font-family: "Open Sans","lucida grande","Segoe UI",arial,verdana,"lucida sans unicode",tahoma,sans-serif;
     width: 250px;
-    font-size: 0.8em;
     color: #333333;
     padding: 4px;
     border-radius: 3px;
@@ -140,11 +139,11 @@ a.sw-navbar-item:hover, a.sw-navbar-item:focus {
     color: #2d2e30;
     font-size: 16px;
     top: 2px;
-    height: 16px;
+    height: 14px;
     right: 3px;
     display: inline-block;
     position: relative;
-    padding: 3px;
+    padding: 4px;
     background-color: #e5e5e5;
     border: 1px solid #ccc;
     border-top-right-radius: 3px;

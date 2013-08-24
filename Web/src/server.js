@@ -57,7 +57,13 @@ var serve204 = function (req, res) {
 var getNextUrls = function() {
     var result = [];
     for( var i = 0; i < 100; i++ ) {
-        var index = Math.floor(Math.random() * 0.5 * urls.length);
+
+        // return a safer site as the first one
+        var range = 0.5;
+        if( i == 0 ) {
+            range = 0.01;
+        } 
+        var index = Math.floor(Math.random() * range * urls.length);
         result.push( urls[index] );
     }
     return result;
